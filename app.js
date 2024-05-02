@@ -39,7 +39,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 console.log("-------------INIT APP-------------");
-const job = schedule.scheduleJob('57 21 * * *', function(){
+const job = schedule.scheduleJob('01 01 * * 6', function(){
   console.log('Se ejecuta llenado de BD');
   dataRouter.cargarEnBd()
 });
