@@ -9,4 +9,4 @@ RUN npm install
 COPY . .
 
 EXPOSE 8080
-CMD node --max-old-space-size=6014 app.js
+CMD node --max-old-space-size=6014 ./bin/www
