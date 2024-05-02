@@ -3,4 +3,4 @@ module.exports = {
     user     : 'root',
     password : '}]F_NE?5BhF[{JlR',
     database : 'Data'
-  };
+};
