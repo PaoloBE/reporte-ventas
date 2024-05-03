@@ -89,7 +89,35 @@ router.get('/', function(req, res, next) {
         xy.peVVC =  xy.peVVC + ob.peVVC;
         xy.dia =  ob.dia;
       }
-      res.status(200).send(xy)
+      var sendObj = JSON.parse(JSON.stringify(xy))
+      xy.ppoAv = 0,
+      xy.ppoNC = 0,
+      xy.ppoVC = 0,
+      xy.ppo90 = 0,
+      xy.pprAv = 0,
+      xy.pprNC = 0,
+      xy.pprVC = 0,
+      xy.ppr90 = 0,
+      xy.pTtAv = 0,
+      xy.pTtNC = 0,
+      xy.pTtVC = 0,
+      xy.pVRAv = 0,
+      xy.pVRNC = 0,
+      xy.pVRVC = 0,
+      xy.pLLAA = 0,
+      xy.peTAv = 0,
+      xy.peTNC = 0,
+      xy.peTVC = 0,
+      xy.peTUR = 0,
+      xy.petUP = 0,
+      xy.pePAV = 0,
+      xy.pePNC = 0,
+      xy.pePVC = 0,
+      xy.peVAV = 0,
+      xy.peVNC = 0,
+      xy.peVVC = 0,
+      xy.dia = 0
+      res.status(200).send(sendObj)
     }
   });
 })
