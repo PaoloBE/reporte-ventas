@@ -91,14 +91,18 @@ async function cargarEnBd() {
   // Downloads the file into a buffer in memory.
   const storage = new Storage({keyFilename: 'key.json'});
   const contents = await storage.bucket(bucketName).file(fileName).download();
+  console.log('DEBUG: Se descargó xlsx')
   var wb = new ExcelJS.Workbook();
   await wb.xlsx.read(contents);
+  console.log('DEBUG: Se leyó xlsx')
   con.query('TRUNCATE Data.ventasData', function (error, results, fields) {
     if (error) throw error;
+    console.log('DEBUG: Se truncó tabla Data.ventasData')
   });
   var fin = wb.getWorksheet('Reporte').getCell(2,2).text.split(' al ')[1];
   const ws = wb.getWorksheet('Base');
   try {
+    console.log('DEBUG: Inicio de llenado de tabla Data.ventasData')
     ws.eachRow(function(row, rowNumber) {
       if (rowNumber > 3) {
         var codigo = row.findCell(1).text;
@@ -153,7 +157,7 @@ async function cargarEnBd() {
         });
       }
     });
-    console.log("Enviado a DB")
+    console.log("DEBUG: Enviado a DB")
   }
   catch (err) {
       console.log(err);
