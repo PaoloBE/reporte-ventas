@@ -138,6 +138,7 @@ async function cargarEnBd() {
   console.log('DEBUG: Se descargó xlsx')
   var wb = new ExcelJS.Workbook();
   await wb.xlsx.read(contents);
+  contents = null
   console.log('DEBUG: Se leyó xlsx')
   con.query('TRUNCATE Data.ventasData', function (error, results, fields) {
     if (error) throw error;
