@@ -142,70 +142,71 @@ async function cargarEnBd() {
   con.query('TRUNCATE Data.ventasData', function (error, results, fields) {
     if (error) throw error;
     console.log('DEBUG: Se truncó tabla Data.ventasData')
-  });
-  var fin = wb.getWorksheet('Reporte').getCell(2,2).text.split(' al ')[1];
-  const ws = wb.getWorksheet('Base');
-  try {
-    console.log('DEBUG: Inicio de llenado de tabla Data.ventasData')
-    ws.eachRow(function(row, rowNumber) {
-      if (rowNumber > 3) {
-        var codigo = row.findCell(1).text;
-        var nombre = row.findCell(2).text;
-        var clase = row.findCell(3).text;
-        var loc = row.findCell(4).text + ' - ' + row.findCell(12).text + ' - ' + row.findCell(13).text;
-        var locEnt = row.findCell(11).text + ' - ' + row.findCell(5).text;
-        //Porta Origen Postpago
-        var ppoAv = + row.findCell(24).text;
-        var ppoNC = + row.findCell(95).text;
-        var ppoVC = ppoAv - ppoNC;
-        var ppo90 = + row.findCell(63).text;
-        //Porta Origen Postpago
-        var pprAv = + row.findCell(25).text;
-        var pprNC = + row.findCell(94).text;
-        var pprVC = pprAv - pprNC;
-        var ppr90 = + row.findCell(54).text;
-        //Postpago Total
-        var pTtAv = + row.findCell(52).text;
-        var pTtNC = + row.findCell(96).text;
-        var pTtVC = pTtAv - pTtNC;
-        //Venta Regular
-        var pVRAv = pTtAv - ppoAv - pprAv;
-        var pVRNC = pTtNC - ppoNC - pprNC;
-        var pVRVC = pVRAv - pVRNC;
-        var pLLAA = + row.findCell(47).text;
-        //Prepago
-        var peTAv = + row.findCell(21).text;
-        var peTNC = + row.findCell(72).text;
-        var peTVC = peTAv - peTNC;
-        var peTUR = + row.findCell(30).text;
-        var petUP = peTAv > 0 ? peTUR / peTAv : 0;
-        var pePAV = + row.findCell(23).text;
-        var pePNC = + row.findCell(75).text;
-        var pePVC = pePAV - pePNC;
-        var peVAV = peTAv - pePAV;
-        var peVNC = peTNC - pePNC;
-        var peVVC = peVAV - peVNC;
+    var fin = wb.getWorksheet('Reporte').getCell(2,2).text.split(' al ')[1];
+    const ws = wb.getWorksheet('Base');
+    try {
+      console.log('DEBUG: Inicio de llenado de tabla Data.ventasData')
+      ws.eachRow(function(row, rowNumber) {
+        if (rowNumber > 3) {
+          var codigo = row.findCell(1).text;
+          var nombre = row.findCell(2).text;
+          var clase = row.findCell(3).text;
+          var loc = row.findCell(4).text + ' - ' + row.findCell(12).text + ' - ' + row.findCell(13).text;
+          var locEnt = row.findCell(11).text + ' - ' + row.findCell(5).text;
+          //Porta Origen Postpago
+          var ppoAv = + row.findCell(24).text;
+          var ppoNC = + row.findCell(95).text;
+          var ppoVC = ppoAv - ppoNC;
+          var ppo90 = + row.findCell(63).text;
+          //Porta Origen Postpago
+          var pprAv = + row.findCell(25).text;
+          var pprNC = + row.findCell(94).text;
+          var pprVC = pprAv - pprNC;
+          var ppr90 = + row.findCell(54).text;
+          //Postpago Total
+          var pTtAv = + row.findCell(52).text;
+          var pTtNC = + row.findCell(96).text;
+          var pTtVC = pTtAv - pTtNC;
+          //Venta Regular
+          var pVRAv = pTtAv - ppoAv - pprAv;
+          var pVRNC = pTtNC - ppoNC - pprNC;
+          var pVRVC = pVRAv - pVRNC;
+          var pLLAA = + row.findCell(47).text;
+          //Prepago
+          var peTAv = + row.findCell(21).text;
+          var peTNC = + row.findCell(72).text;
+          var peTVC = peTAv - peTNC;
+          var peTUR = + row.findCell(30).text;
+          var petUP = peTAv > 0 ? peTUR / peTAv : 0;
+          var pePAV = + row.findCell(23).text;
+          var pePNC = + row.findCell(75).text;
+          var pePVC = pePAV - pePNC;
+          var peVAV = peTAv - pePAV;
+          var peVNC = peTNC - pePNC;
+          var peVVC = peVAV - peVNC;
 
-        var dia = + row.findCell(18)
-        
-        con.query('INSERT INTO Data.ventasData ' +
-        '(fin,codigo,nombre,clase,loc,locEnt,ppoAv,ppoNC,'+
-        'ppoVC,ppo90,pprAv,pprNC,pprVC,ppr90,pTtAv,pTtNC,pTtVC,pVRAv,'+
-        'pVRNC,pVRVC,pLLAA,peTAv,peTNC,peTVC,peTUR,petUP,pePAV,pePNC,'+
-        'pePVC,peVAV,peVNC,peVVC,dia) '+
-        'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [fin,codigo,nombre,clase,loc,locEnt,ppoAv,ppoNC,
-          ppoVC,ppo90,pprAv,pprNC,pprVC,ppr90,pTtAv,pTtNC,pTtVC,pVRAv,
-          pVRNC,pVRVC,pLLAA,peTAv,peTNC,peTVC,peTUR,petUP,pePAV,pePNC,
-          pePVC,peVAV,peVNC,peVVC,dia], function (error, results, fields) {
-          if (error) throw error;
-        });
-      }
-    });
-    console.log("DEBUG: Enviado a DB")
-  }
-  catch (err) {
-      console.log(err);
-  }
+          var dia = + row.findCell(18)
+          
+          con.query('INSERT INTO Data.ventasData ' +
+          '(fin,codigo,nombre,clase,loc,locEnt,ppoAv,ppoNC,'+
+          'ppoVC,ppo90,pprAv,pprNC,pprVC,ppr90,pTtAv,pTtNC,pTtVC,pVRAv,'+
+          'pVRNC,pVRVC,pLLAA,peTAv,peTNC,peTVC,peTUR,petUP,pePAV,pePNC,'+
+          'pePVC,peVAV,peVNC,peVVC,dia) '+
+          'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [fin,codigo,nombre,clase,loc,locEnt,ppoAv,ppoNC,
+            ppoVC,ppo90,pprAv,pprNC,pprVC,ppr90,pTtAv,pTtNC,pTtVC,pVRAv,
+            pVRNC,pVRVC,pLLAA,peTAv,peTNC,peTVC,peTUR,petUP,pePAV,pePNC,
+            pePVC,peVAV,peVNC,peVVC,dia], function (error, results, fields) {
+            if (error) throw error;
+          });
+        }
+      });
+      console.log("DEBUG: Enviado a DB")
+    }
+    catch (err) {
+        console.log(err);
+    }
+  });
+  
 }
 
 module.exports = {router,cargarEnBd}
