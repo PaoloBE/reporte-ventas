@@ -6,9 +6,25 @@ const ExcelJS = require('exceljs');
 var result = require('../models/result')
 var con = mysql.createConnection(require("../config/bd"));
 
+router.get('/currentDate', function(req, res, next) {
+  con.query('SELECT fin FROM Data.ventasData LIMIT 1', function(error, results, fields){
+    if (error) {
+      console.log(error);
+      res.status(404).send('Error al procesar')
+    } else if (!results.length) {
+      res.status(404).send('Sin Data')
+    } else {
+      var resu = JSON.parse(JSON.stringify(results))
+      res.status(200).send({
+        fin : results[0].fin
+      })
+    }
+  })
+})
+
 router.get('/checkOne', function(req, res, next) {
   var codigo = req.query.codigo;
-  con.query('SELECT * FROM Data.ventasData WHERE codigo= ? LIMIT 1', codigo , function (error, results, fields) {
+  con.query('SELECT * FROM Data.ventasData WHERE codigo= ? LIMIT 1', codigo , function(error, results, fields) {
     if (error) {
       console.log(error);
       res.status(404).send('Error al procesar')
