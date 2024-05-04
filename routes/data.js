@@ -24,7 +24,7 @@ router.get('/currentDate', function(req, res, next) {
 
 router.get('/checkOne', function(req, res, next) {
   var codigo = req.query.codigo;
-  con.query('SELECT * FROM Data.ventasData WHERE codigo= ? LIMIT 1', codigo , function(error, results, fields) {
+  con.query('SELECT * FROM Data.ventasData WHERE CAST(codigo as UNSIGNED) = ? LIMIT 1', +codigo , function(error, results, fields) {
     if (error) {
       console.log(error);
       res.status(404).send('Error al procesar')
@@ -45,7 +45,7 @@ router.get('/', function(req, res, next) {
   var codigo = req.query.codigo;
   var min = req.query.min;
   var max = req.query.max;
-  con.query('SELECT * FROM Data.ventasData WHERE codigo= ? AND dia < ? AND dia > ? ORDER BY dia ASC', [codigo, max, min], function (error, results, fields) {
+  con.query('SELECT * FROM Data.ventasData WHERE CAST(codigo as UNSIGNED) = ? AND dia < ? AND dia > ? ORDER BY dia ASC', [+codigo, max, min], function (error, results, fields) {
     if (error) {
       console.log(error);
       res.status(404).send('Error al procesar')
@@ -134,7 +134,7 @@ async function cargarEnBd() {
   var fileName = 'data de muestra.xlsx';
   // Downloads the file into a buffer in memory.
   const storage = new Storage({keyFilename: 'key.json'});
-  const contents = await storage.bucket(bucketName).file(fileName).download();
+  var contents = await storage.bucket(bucketName).file(fileName).download();
   console.log('DEBUG: Se descargó xlsx')
   var wb = new ExcelJS.Workbook();
   await wb.xlsx.read(contents);
