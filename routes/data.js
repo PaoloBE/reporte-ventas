@@ -45,7 +45,7 @@ router.get('/', function(req, res, next) {
   var codigo = req.query.codigo;
   var min = req.query.min;
   var max = req.query.max;
-  con.query('SELECT * FROM Data.ventasData WHERE CAST(codigo as UNSIGNED) = ? AND dia < ? AND dia > ? ORDER BY dia ASC', [+codigo, max, min], function (error, results, fields) {
+  con.query('SELECT * FROM Data.ventasData WHERE CAST(codigo as UNSIGNED) = ? AND dia <= ? AND dia >= ? ORDER BY dia ASC', [+codigo, max, min], function (error, results, fields) {
     if (error) {
       console.log(error);
       res.status(404).send('Error al procesar')
@@ -131,7 +131,7 @@ router.get('/manual', function(req, res, next) {
 
 async function cargarEnBd() {
   var bucketName= 'river-sonar-421523_cloudbuild';
-  var fileName = 'data de muestra.xlsx';
+  var fileName = 'data al 19.05.xlsx';
   // Downloads the file into a buffer in memory.
   const storage = new Storage({keyFilename: 'key.json'});
   var contents = await storage.bucket(bucketName).file(fileName).download();
@@ -143,44 +143,44 @@ async function cargarEnBd() {
   con.query('TRUNCATE Data.ventasData', function (error, results, fields) {
     if (error) throw error;
     console.log('DEBUG: Se truncó tabla Data.ventasData')
-    var fin = wb.getWorksheet('Reporte').getCell(2,2).text.split(' al ')[1];
-    const ws = wb.getWorksheet('Base');
+    var fin = fileName.split('al ')[1].split('.')[0];
+    const ws = wb.getWorksheet('Sheet1');
     try {
       console.log('DEBUG: Inicio de llenado de tabla Data.ventasData')
       ws.eachRow(function(row, rowNumber) {
         if (rowNumber > 3) {
           var codigo = row.findCell(1).text;
           var nombre = row.findCell(2).text;
-          var clase = row.findCell(3).text;
+          var clase = row.findCell(3) === undefined ? '' : row.findCell(3).text;
           var loc = row.findCell(4).text + ' - ' + row.findCell(12).text + ' - ' + row.findCell(13).text;
-          var locEnt = row.findCell(11).text + ' - ' + row.findCell(5).text;
-          //Porta Origen Postpago
-          var ppoAv = + row.findCell(24).text;
-          var ppoNC = + row.findCell(95).text;
+          var locEnt = row.findCell(11) === undefined ? row.findCell(5).text : (row.findCell(11).text + ' - ' + row.findCell(5).text);
+          //Porta Origen Postpago X
+          var ppoAv = + row.findCell(31).text;
+          var ppoNC = + row.findCell(50).text;
           var ppoVC = ppoAv - ppoNC;
           var ppo90 = + row.findCell(63).text;
-          //Porta Origen Postpago
-          var pprAv = + row.findCell(25).text;
-          var pprNC = + row.findCell(94).text;
+          //Porta Origen Postpago X
+          var pprAv = + row.findCell(32).text;
+          var pprNC = + row.findCell(49).text;
           var pprVC = pprAv - pprNC;
-          var ppr90 = + row.findCell(54).text;
-          //Postpago Total
-          var pTtAv = + row.findCell(52).text;
-          var pTtNC = + row.findCell(96).text;
+          var ppr90 = + row.findCell(43).text;
+          //Postpago Total X
+          var pTtAv = + row.findCell(39).text;
+          var pTtNC = + row.findCell(51).text;
           var pTtVC = pTtAv - pTtNC;
-          //Venta Regular
+          //Venta Regular X
           var pVRAv = pTtAv - ppoAv - pprAv;
           var pVRNC = pTtNC - ppoNC - pprNC;
           var pVRVC = pVRAv - pVRNC;
-          var pLLAA = + row.findCell(47).text;
+          var pLLAA = + row.findCell(34).text;
           //Prepago
-          var peTAv = + row.findCell(21).text;
-          var peTNC = + row.findCell(72).text;
+          var peTAv = + row.findCell(22).text;
+          var peTNC = + row.findCell(44).text;
           var peTVC = peTAv - peTNC;
-          var peTUR = + row.findCell(30).text;
+          var peTUR = + row.findCell(33).text;
           var petUP = peTAv > 0 ? peTUR / peTAv : 0;
-          var pePAV = + row.findCell(23).text;
-          var pePNC = + row.findCell(75).text;
+          var pePAV = + row.findCell(28).text;
+          var pePNC = + row.findCell(47).text;
           var pePVC = pePAV - pePNC;
           var peVAV = peTAv - pePAV;
           var peVNC = peTNC - pePNC;

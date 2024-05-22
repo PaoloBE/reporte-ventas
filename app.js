@@ -41,6 +41,6 @@ app.use(function(err, req, res, next) {
 console.log("-------------INIT APP-------------");
 const job = schedule.scheduleJob('01 01 * * 6', function(){
   console.log('Se ejecuta llenado de BD');
-  dataRouter.cargarEnBd()
+  //dataRouter.cargarEnBd()
 });
 module.exports = app;
