@@ -81,12 +81,18 @@ router.get('/', function(req, res, next) {
         xy.peTVC =  xy.peTVC + ob.peTVC;
         xy.peTUR =  xy.peTUR + ob.peTUR;
         xy.petUP =  xy.petUP + ob.petUP;
-        xy.pePAV =  xy.pePAV + ob.pePAV;
-        xy.pePNC =  xy.pePNC + ob.pePNC;
-        xy.pePVC =  xy.pePVC + ob.pePVC;
-        xy.peVAV =  xy.peVAV + ob.peVAV;
-        xy.peVNC =  xy.peVNC + ob.peVNC;
-        xy.peVVC =  xy.peVVC + ob.peVVC;
+        xy.peV5A =  xy.peV5A + ob.peV5A;
+        xy.peV5N =  xy.peV5N + ob.peV5N;
+        xy.peV5C =  xy.peV5C + ob.peV5C;
+        xy.peP5A =  xy.peP5A + ob.peP5A;
+        xy.peP5N =  xy.peP5N + ob.peP5N;
+        xy.peP5C =  xy.peP5C + ob.peP5C;
+        xy.peVFA =  xy.peVFA + ob.peVFA;
+        xy.peVFN =  xy.peVFN + ob.peVFN;
+        xy.peVFC =  xy.peVFC + ob.peVFC;
+        xy.pePFA =  xy.pePFA + ob.pePFA;
+        xy.pePFN =  xy.pePFN + ob.pePFN;
+        xy.pePFC =  xy.pePFC + ob.pePFC;
         xy.dia =  ob.dia;
       }
       var sendObj = JSON.parse(JSON.stringify(xy))
@@ -110,12 +116,18 @@ router.get('/', function(req, res, next) {
       xy.peTVC = 0,
       xy.peTUR = 0,
       xy.petUP = 0,
-      xy.pePAV = 0,
-      xy.pePNC = 0,
-      xy.pePVC = 0,
-      xy.peVAV = 0,
-      xy.peVNC = 0,
-      xy.peVVC = 0,
+      xy.peV5A = 0;//
+      xy.peV5N = 0;//
+      xy.peV5C = 0;
+      xy.peP5A = 0;
+      xy.peP5N = 0;
+      xy.peP5C = 0;
+      xy.peVFA = 0;
+      xy.peVFN = 0;
+      xy.peVFC = 0;
+      xy.pePFA = 0;
+      xy.pePFN = 0;
+      xy.pePFC = 0;
       xy.dia = 0
       res.status(200).send(sendObj)
     }
@@ -178,25 +190,31 @@ async function cargarEnBd() {
           var peTNC = + row.findCell(44).text;
           var peTVC = peTAv - peTNC;
           var peTUR = + row.findCell(33).text;
+          //
           var petUP = peTAv > 0 ? peTUR / peTAv : 0;
-          var pePAV = + row.findCell(28).text;
-          var pePNC = + row.findCell(47).text;
-          var pePVC = pePAV - pePNC;
-          var peVAV = peTAv - pePAV;
-          var peVNC = peTNC - pePNC;
-          var peVVC = peVAV - peVNC;
-
+          var peV5A = + row.findCell(28).text;//
+          var peV5N = + row.findCell(47).text;//
+          var peV5C = peV5A - peV5N;
+          var peP5A = + row.findCell(23).text;
+          var peP5N = + row.findCell(24).text;
+          var peP5C = peP5A - peP5N;
+          var peVFA = + row.findCell(27).text;
+          var peVFN = + row.findCell(46).text;
+          var peVFC = peVFA - peVFN;
+          var pePFA = + row.findCell(25).text;
+          var pePFN = + row.findCell(26).text;
+          var pePFC = pePFA - pePFN;
           var dia = + row.findCell(18)
           
           con.query('INSERT INTO Data.ventasData ' +
           '(fin,codigo,nombre,clase,loc,locEnt,ppoAv,ppoNC,'+
           'ppoVC,ppo90,pprAv,pprNC,pprVC,ppr90,pTtAv,pTtNC,pTtVC,pVRAv,'+
-          'pVRNC,pVRVC,pLLAA,peTAv,peTNC,peTVC,peTUR,petUP,pePAV,pePNC,'+
-          'pePVC,peVAV,peVNC,peVVC,dia) '+
-          'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [fin,codigo,nombre,clase,loc,locEnt,ppoAv,ppoNC,
+          'pVRNC,pVRVC,pLLAA,peTAv,peTNC,peTVC,peTUR,petUP,peV5A,peV5N,'+
+          'peV5C,peP5A,peP5N,peP5C,peVFA,peVFN,peVFC,pePFA,pePFN,pePFC,dia) '+
+          'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [fin,codigo,nombre,clase,loc,locEnt,ppoAv,ppoNC,
             ppoVC,ppo90,pprAv,pprNC,pprVC,ppr90,pTtAv,pTtNC,pTtVC,pVRAv,
-            pVRNC,pVRVC,pLLAA,peTAv,peTNC,peTVC,peTUR,petUP,pePAV,pePNC,
-            pePVC,peVAV,peVNC,peVVC,dia], function (error, results, fields) {
+            pVRNC,pVRVC,pLLAA,peTAv,peTNC,peTVC,peTUR,petUP,peV5A,peV5N,
+            peV5C,peP5A,peP5N,peP5C,peVFA,peVFN,peVFC,pePFA,pePFN,pePFC,dia], function (error, results, fields) {
             if (error) throw error;
           });
         }
