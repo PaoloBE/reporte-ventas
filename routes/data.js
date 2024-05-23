@@ -123,14 +123,15 @@ router.get('/', function(req, res, next) {
 
 /* Carga de data Excel en BD. */
 router.get('/manual', function(req, res, next) {
-  cargarEnBd().catch(console.error);
+  var date = req.query.date
+  cargarEnBd(date).catch(console.error);
 
   res.send('Enviando a BD');
 });
 
-async function cargarEnBd() {
+async function cargarEnBd(date) {
   var bucketName= 'river-sonar-421523_cloudbuild';
-  var fileName = 'data al 19.05.xlsx';
+  var fileName = 'data al '+date+'.xlsx';
   // Downloads the file into a buffer in memory.
   const storage = new Storage({keyFilename: 'key.json'});
   var contents = await storage.bucket(bucketName).file(fileName).download();
@@ -142,7 +143,7 @@ async function cargarEnBd() {
   con.query('TRUNCATE Data.ventasData', function (error, results, fields) {
     if (error) throw error;
     console.log('DEBUG: Se truncó tabla Data.ventasData')
-    var fin = fileName.split('al ')[1].replace('.xlsx','');
+    var fin = ''+date+'';
     const ws = wb.getWorksheet('Data');
     var ppoAvPOS = 0;
     var ppoNCPOS = 0;
