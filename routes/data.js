@@ -203,7 +203,7 @@ async function cargarEnBd() {
           }
           row.cellCount
         }
-        if (rowNumber > 3 && rowNumber < 1000) {
+        if (rowNumber > 3) {
           var codigo = row.findCell(1).text;
           var nombre = row.findCell(2).text;
           //var clase = row.findCell(3) === undefined ? '' : row.findCell(3).text;
