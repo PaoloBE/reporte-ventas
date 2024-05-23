@@ -53,6 +53,7 @@ router.get('/', function(req, res, next) {
       res.status(404).send('Sin datos')
     } else {
       var resu = JSON.parse(JSON.stringify(results))
+      console.log(resu);
       var xy = result;
       for (const ob of resu) {
         xy.fin =  ob.fin;
@@ -63,71 +64,57 @@ router.get('/', function(req, res, next) {
         xy.locEnt =  ob.locEnt;
         xy.ppoAv =  xy.ppoAv + parseInt(ob.ppoAv);
         xy.ppoNC =  xy.ppoNC + ob.ppoNC;
-        xy.ppoVC =  xy.ppoVC + ob.ppoVC;
-        xy.ppo90 =  xy.ppo90 + ob.ppo90;
+        xy.ppo9A =  xy.ppo9A + ob.ppo9A;
+        xy.ppo9N =  xy.ppo9N + ob.ppo9N;
         xy.pprAv =  xy.pprAv + ob.pprAv;
         xy.pprNC =  xy.pprNC + ob.pprNC;
-        xy.pprVC =  xy.pprVC + ob.pprVC;
-        xy.ppr90 =  xy.ppr90 + ob.ppr90;
+        xy.ppr9A =  xy.ppr9A + ob.ppr9A;
+        xy.ppr9N =  xy.ppr9N + ob.ppr9N;
         xy.pTtAv =  xy.pTtAv + ob.pTtAv;
         xy.pTtNC =  xy.pTtNC + ob.pTtNC;
-        xy.pTtVC =  xy.pTtVC + ob.pTtVC;
         xy.pVRAv =  xy.pVRAv + ob.pVRAv;
         xy.pVRNC =  xy.pVRNC + ob.pVRNC;
-        xy.pVRVC =  xy.pVRVC + ob.pVRVC;
+        xy.pLLAN =  xy.pLLAN + ob.pLLAN;
         xy.pLLAA =  xy.pLLAA + ob.pLLAA;
         xy.peTAv =  xy.peTAv + ob.peTAv;
         xy.peTNC =  xy.peTNC + ob.peTNC;
-        xy.peTVC =  xy.peTVC + ob.peTVC;
         xy.peTUR =  xy.peTUR + ob.peTUR;
-        xy.petUP =  xy.petUP + ob.petUP;
         xy.peV5A =  xy.peV5A + ob.peV5A;
         xy.peV5N =  xy.peV5N + ob.peV5N;
-        xy.peV5C =  xy.peV5C + ob.peV5C;
         xy.peP5A =  xy.peP5A + ob.peP5A;
         xy.peP5N =  xy.peP5N + ob.peP5N;
-        xy.peP5C =  xy.peP5C + ob.peP5C;
         xy.peVFA =  xy.peVFA + ob.peVFA;
         xy.peVFN =  xy.peVFN + ob.peVFN;
-        xy.peVFC =  xy.peVFC + ob.peVFC;
         xy.pePFA =  xy.pePFA + ob.pePFA;
         xy.pePFN =  xy.pePFN + ob.pePFN;
-        xy.pePFC =  xy.pePFC + ob.pePFC;
         xy.dia =  ob.dia;
       }
       var sendObj = JSON.parse(JSON.stringify(xy))
       xy.ppoAv = 0,
       xy.ppoNC = 0,
-      xy.ppoVC = 0,
-      xy.ppo90 = 0,
+      xy.ppo9A = 0,
+      xy.ppo9N = 0,
       xy.pprAv = 0,
       xy.pprNC = 0,
-      xy.pprVC = 0,
-      xy.ppr90 = 0,
+      xy.ppr9A = 0,
+      xy.ppr9N = 0,
       xy.pTtAv = 0,
       xy.pTtNC = 0,
-      xy.pTtVC = 0,
       xy.pVRAv = 0,
       xy.pVRNC = 0,
-      xy.pVRVC = 0,
+      xy.pLLAN = 0,
       xy.pLLAA = 0,
       xy.peTAv = 0,
       xy.peTNC = 0,
-      xy.peTVC = 0,
       xy.peTUR = 0,
-      xy.petUP = 0,
       xy.peV5A = 0,//
       xy.peV5N = 0,//
-      xy.peV5C = 0,
       xy.peP5A = 0,
       xy.peP5N = 0,
-      xy.peP5C = 0,
       xy.peVFA = 0,
       xy.peVFN = 0,
-      xy.peVFC = 0,
       xy.pePFA = 0,
       xy.pePFN = 0,
-      xy.pePFC = 0,
       xy.dia = 0
       res.status(200).send(sendObj)
     }
@@ -155,7 +142,7 @@ async function cargarEnBd() {
   con.query('TRUNCATE Data.ventasData', function (error, results, fields) {
     if (error) throw error;
     console.log('DEBUG: Se truncó tabla Data.ventasData')
-    var fin = fileName.split('al ')[1];
+    var fin = fileName.split('al ')[1].replace('.xlsx','');
     const ws = wb.getWorksheet('Data');
     var ppoAvPOS = 0;
     var ppoNCPOS = 0;
