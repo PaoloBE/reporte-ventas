@@ -205,7 +205,7 @@ async function cargarEnBd() {
         }
         if (rowNumber > 3) {
           var codigo = row.findCell(1).text;
-          var nombre = row.findCell(2).text;
+          var nombre = row.findCell(2) === undefined ? '' : row.findCell(2).text;
           //var clase = row.findCell(3) === undefined ? '' : row.findCell(3).text;
           var clase = '';
           //var loc = row.findCell(4).text + ' - ' + row.findCell(12).text + ' - ' + row.findCell(13).text;
