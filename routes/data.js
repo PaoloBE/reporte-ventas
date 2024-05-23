@@ -144,7 +144,7 @@ async function cargarEnBd(date) {
     if (error) throw error;
     console.log('DEBUG: Se truncó tabla Data.ventasData')
     var fin = ''+date+'';
-    const ws = wb.getWorksheet('Data');
+    const ws = wb.getWorksheet(1);
     var ppoAvPOS = 0;
     var ppoNCPOS = 0;
     var ppo9APOS = 0;
