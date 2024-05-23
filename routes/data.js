@@ -14,7 +14,7 @@ router.get('/currentDate', function(req, res, next) {
     } else if (!results.length) {
       res.status(404).send('Sin Data')
     } else {
-      var resu = JSON.parse(JSON.stringify(results))
+      //var resu = JSON.parse(JSON.stringify(results))
       res.status(200).send({
         fin : results[0].fin
       })
