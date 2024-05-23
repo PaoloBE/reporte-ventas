@@ -116,18 +116,18 @@ router.get('/', function(req, res, next) {
       xy.peTVC = 0,
       xy.peTUR = 0,
       xy.petUP = 0,
-      xy.peV5A = 0;//
-      xy.peV5N = 0;//
-      xy.peV5C = 0;
-      xy.peP5A = 0;
-      xy.peP5N = 0;
-      xy.peP5C = 0;
-      xy.peVFA = 0;
-      xy.peVFN = 0;
-      xy.peVFC = 0;
-      xy.pePFA = 0;
-      xy.pePFN = 0;
-      xy.pePFC = 0;
+      xy.peV5A = 0,//
+      xy.peV5N = 0,//
+      xy.peV5C = 0,
+      xy.peP5A = 0,
+      xy.peP5N = 0,
+      xy.peP5C = 0,
+      xy.peVFA = 0,
+      xy.peVFN = 0,
+      xy.peVFC = 0,
+      xy.pePFA = 0,
+      xy.pePFN = 0,
+      xy.pePFC = 0,
       xy.dia = 0
       res.status(200).send(sendObj)
     }
@@ -155,66 +155,119 @@ async function cargarEnBd() {
   con.query('TRUNCATE Data.ventasData', function (error, results, fields) {
     if (error) throw error;
     console.log('DEBUG: Se truncó tabla Data.ventasData')
-    var fin = fileName.split('al ')[1].split('.')[0];
-    const ws = wb.getWorksheet('Sheet1');
+    var fin = fileName.split('al ')[1];
+    const ws = wb.getWorksheet('Data');
+    var ppoAvPOS = 0;
+    var ppoNCPOS = 0;
+    var ppo9APOS = 0;
+    var ppo9NPOS = 0;
+    var pprAvPOS = 0;
+    var pprNCPOS = 0;
+    var ppr9APOS = 0;
+    var ppr9NPOS = 0;
+    var pTtAvPOS = 0;
+    var pTtNCPOS = 0;
+    var pVRAvPOS = 0;
+    var pVRNCPOS = 0;
+    var pLLANPOS = 0;
+    var pLLAAPOS = 0;
+    var peTAvPOS = 0;
+    var peTNCPOS = 0;
+    var peTURPOS = 0;
+    var peV5APOS = 0;
+    var peV5NPOS = 0;
+    var peP5APOS = 0;
+    var peP5NPOS = 0;
+    var peVFAPOS = 0;
+    var peVFNPOS = 0;
+    var pePFAPOS = 0;
+    var pePFNPOS = 0;
     try {
       console.log('DEBUG: Inicio de llenado de tabla Data.ventasData')
       ws.eachRow(function(row, rowNumber) {
-        if (rowNumber > 3) {
+        if (rowNumber == 3) {
+          for (let i = 1; i <= row.actualCellCount; i++) {
+            console.log(i+' - '+row.findCell(i).text)
+            ppoAvPOS = row.findCell(i).text == 'Sum of OSS' ? i : ppoAvPOS;
+            ppoNCPOS = row.findCell(i).text == 'Sum of NC OSS' ? i : ppoNCPOS;
+            ppo9APOS = row.findCell(i).text == 'Sum of Porta 90 SS OSS' ? i : ppo9APOS;
+            ppo9NPOS = row.findCell(i).text == 'Sum of Porta 90 NC SS OSS' ? i : ppo9NPOS;
+            pprAvPOS = row.findCell(i).text == 'Sum of OPP' ? i : pprAvPOS;
+            pprNCPOS = row.findCell(i).text == 'Sum of NC OPP' ? i : pprNCPOS;
+            ppr9APOS = row.findCell(i).text == 'Sum of Porta 90 SS OPP' ? i : ppr9APOS;
+            ppr9NPOS = row.findCell(i).text == 'Sum of Porta 90 NC SS OPP' ? i : ppr9NPOS;
+            pTtAvPOS = row.findCell(i).text == 'Sum of SS' ? i : pTtAvPOS;
+            pTtNCPOS = row.findCell(i).text == 'Sum of NC SS' ? i : pTtNCPOS;
+            pVRAvPOS = row.findCell(i).text == 'Sum of SS VR' ? i : pVRAvPOS;
+            pVRNCPOS = row.findCell(i).text == 'Sum of NC SS VR' ? i : pVRNCPOS;
+            pLLANPOS = row.findCell(i).text == 'Sum of NC LLAA' ? i : pLLANPOS;
+            pLLAAPOS = row.findCell(i).text == 'Sum of LLAA' ? i : pLLAAPOS;
+            peTAvPOS = row.findCell(i).text == 'Sum of PP' ? i : peTAvPOS;
+            peTNCPOS = row.findCell(i).text == 'NO COMISIONABLES PP' ? i : peTNCPOS;
+            peTURPOS = row.findCell(i).text == "UR's" ? i : peTURPOS;
+            peV5APOS = row.findCell(i).text == 'Sum of PP5 VR' ? i : peV5APOS;
+            peV5NPOS = row.findCell(i).text == 'Sum of PP5 VR NC' ? i : peV5NPOS;
+            peP5APOS = row.findCell(i).text == 'Sum of PP5 PORTA' ? i : peP5APOS;
+            peP5NPOS = row.findCell(i).text == 'Sum of NC PORTA PP5' ? i : peP5NPOS;
+            peVFAPOS = row.findCell(i).text == 'Sum of PP Flex VR' ? i : peVFAPOS;
+            peVFNPOS = row.findCell(i).text == 'Sum of NC PP Flex VR' ? i : peVFNPOS;
+            pePFAPOS = row.findCell(i).text == 'Sum of PP Flex Porta' ? i : pePFAPOS;
+            pePFNPOS = row.findCell(i).text == 'Sum of NC PP Flex VR' ? i : pePFNPOS;
+          }
+          row.cellCount
+        }
+        if (rowNumber > 3 && rowNumber < 1000) {
           var codigo = row.findCell(1).text;
           var nombre = row.findCell(2).text;
-          var clase = row.findCell(3) === undefined ? '' : row.findCell(3).text;
-          var loc = row.findCell(4).text + ' - ' + row.findCell(12).text + ' - ' + row.findCell(13).text;
-          var locEnt = row.findCell(11) === undefined ? row.findCell(5).text : (row.findCell(11).text + ' - ' + row.findCell(5).text);
+          //var clase = row.findCell(3) === undefined ? '' : row.findCell(3).text;
+          var clase = '';
+          //var loc = row.findCell(4).text + ' - ' + row.findCell(12).text + ' - ' + row.findCell(13).text;
+          var loc = '';
+          //var locEnt = row.findCell(11) === undefined ? row.findCell(5).text : (row.findCell(11).text + ' - ' + row.findCell(5).text);
+          var locEnt = '';
           //Porta Origen Postpago X
-          var ppoAv = + row.findCell(31).text;
-          var ppoNC = + row.findCell(50).text;
-          var ppoVC = ppoAv - ppoNC;
-          var ppo90 = + row.findCell(63).text;
+          var ppoAv = + row.findCell(ppoAvPOS).text;
+          var ppoNC = + row.findCell(ppoNCPOS).text;
+          var ppo9A = + row.findCell(ppo9APOS).text;
+          var ppo9N = + row.findCell(ppo9NPOS).text;
           //Porta Origen Postpago X
-          var pprAv = + row.findCell(32).text;
-          var pprNC = + row.findCell(49).text;
-          var pprVC = pprAv - pprNC;
-          var ppr90 = + row.findCell(43).text;
+          var pprAv = + row.findCell(pprAvPOS).text;
+          var pprNC = + row.findCell(pprNCPOS).text;
+          var ppr9A = + row.findCell(ppr9APOS).text;
+          var ppr9N = + row.findCell(ppr9NPOS).text;
           //Postpago Total X
-          var pTtAv = + row.findCell(39).text;
-          var pTtNC = + row.findCell(51).text;
-          var pTtVC = pTtAv - pTtNC;
+          var pTtAv = + row.findCell(pTtAvPOS).text;
+          var pTtNC = + row.findCell(pTtNCPOS).text;
           //Venta Regular X
-          var pVRAv = pTtAv - ppoAv - pprAv;
-          var pVRNC = pTtNC - ppoNC - pprNC;
-          var pVRVC = pVRAv - pVRNC;
-          var pLLAA = + row.findCell(34).text;
+          var pVRAv = + row.findCell(pVRAvPOS).text;
+          var pVRNC = + row.findCell(pVRNCPOS).text;
+          var pLLAN = + row.findCell(pLLANPOS).text;
+          var pLLAA = + row.findCell(pLLAAPOS).text;
           //Prepago
-          var peTAv = + row.findCell(22).text;
-          var peTNC = + row.findCell(44).text;
-          var peTVC = peTAv - peTNC;
-          var peTUR = + row.findCell(33).text;
+          var peTAv = + row.findCell(peTAvPOS).text;
+          var peTNC = + row.findCell(peTNCPOS).text;
+          var peTUR = + row.findCell(peTURPOS).text;
           //
-          var petUP = peTAv > 0 ? peTUR / peTAv : 0;
-          var peV5A = + row.findCell(28).text;//
-          var peV5N = + row.findCell(47).text;//
-          var peV5C = peV5A - peV5N;
-          var peP5A = + row.findCell(23).text;
-          var peP5N = + row.findCell(24).text;
-          var peP5C = peP5A - peP5N;
-          var peVFA = + row.findCell(27).text;
-          var peVFN = + row.findCell(46).text;
-          var peVFC = peVFA - peVFN;
-          var pePFA = + row.findCell(25).text;
-          var pePFN = + row.findCell(26).text;
-          var pePFC = pePFA - pePFN;
-          var dia = + row.findCell(18)
+          var peV5A = + row.findCell(peV5APOS).text;
+          var peV5N = + row.findCell(peV5NPOS).text;
+          var peP5A = + row.findCell(peP5APOS).text;
+          var peP5N = + row.findCell(peP5NPOS).text;
+          var peVFA = + row.findCell(peVFAPOS).text;
+          var peVFN = + row.findCell(peVFNPOS).text;
+          var pePFA = + row.findCell(pePFAPOS).text;
+          var pePFN = + row.findCell(pePFNPOS).text;
+          var dia = + row.findCell(3)
           
           con.query('INSERT INTO Data.ventasData ' +
           '(fin,codigo,nombre,clase,loc,locEnt,ppoAv,ppoNC,'+
-          'ppoVC,ppo90,pprAv,pprNC,pprVC,ppr90,pTtAv,pTtNC,pTtVC,pVRAv,'+
-          'pVRNC,pVRVC,pLLAA,peTAv,peTNC,peTVC,peTUR,petUP,peV5A,peV5N,'+
-          'peV5C,peP5A,peP5N,peP5C,peVFA,peVFN,peVFC,pePFA,pePFN,pePFC,dia) '+
-          'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [fin,codigo,nombre,clase,loc,locEnt,ppoAv,ppoNC,
-            ppoVC,ppo90,pprAv,pprNC,pprVC,ppr90,pTtAv,pTtNC,pTtVC,pVRAv,
-            pVRNC,pVRVC,pLLAA,peTAv,peTNC,peTVC,peTUR,petUP,peV5A,peV5N,
-            peV5C,peP5A,peP5N,peP5C,peVFA,peVFN,peVFC,pePFA,pePFN,pePFC,dia], function (error, results, fields) {
+          'ppo9A,ppo9N,pprAv,pprNC,ppr9A,ppr9N,pTtAv,pTtNC,pVRAv,'+
+          'pVRNC,pLLAN,pLLAA,peTAv,peTNC,peTUR,peV5A,peV5N,'+
+          'peP5A,peP5N,peVFA,peVFN,pePFA,pePFN,dia) '+
+          'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', 
+          [fin,codigo,nombre,clase,loc,locEnt,ppoAv,ppoNC,
+            ppo9A,ppo9N,pprAv,pprNC,ppr9A,ppr9N,pTtAv,pTtNC,pVRAv,
+            pVRNC,pLLAN,pLLAA,peTAv,peTNC,peTUR,peV5A,peV5N,
+            peP5A,peP5N,peVFA,peVFN,pePFA,pePFN,dia], function (error, results, fields) {
             if (error) throw error;
           });
         }
