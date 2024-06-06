@@ -50,11 +50,23 @@ router.get('/retoPre', function(req, res, next) {
       res.status(404).send('Sin datos')
     } else {
       var resu = JSON.parse(JSON.stringify(results))
-      console.log(resu);
-      res.status(200).send({
-        dni: resu[0].reto_prepago_dni,
-        bono: +resu[0].reto_prepago_bono,
-        reto: +resu[0].reto_prepago_numero
+      var avance = 0;
+      con.query('SELECT SUM(peTAv) as sum FROM Data.ventasData WHERE CAST(codigo as UNSIGNED) = ?', [+codigo], function (err2, resAv, fld) {
+        console.log(resAv + ' - ' + codigo)
+        if (err2) {
+          avance = 0;
+          console.log(err2)
+        } else if (!resAv.length) {
+          avance = 0;
+        } else {
+          avance = resAv[0].sum
+        }
+        res.status(200).send({
+          dni: resu[0].reto_prepago_dni,
+          bono: +resu[0].reto_prepago_bono,
+          reto: +resu[0].reto_prepago_numero,
+          avan: avance
+        })
       })
     }
   })
