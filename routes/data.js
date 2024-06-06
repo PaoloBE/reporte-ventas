@@ -40,6 +40,26 @@ router.get('/checkOne', function(req, res, next) {
   })
 })
 
+router.get('/retoPre', function(req, res, next) {
+  var codigo = req.query.codigo;
+  con.query('SELECT * FROM Data.reto_prepago WHERE CAST(reto_prepago_dni as UNSIGNED) = ?', [+codigo], function (error, results, fields) {
+    if (error) {
+      console.log(error);
+      res.status(404).send('Error al procesar')
+    } else if (!results.length) {
+      res.status(404).send('Sin datos')
+    } else {
+      var resu = JSON.parse(JSON.stringify(results))
+      console.log(resu);
+      res.status(200).send({
+        dni: resu[0].reto_prepago_dni,
+        bono: +resu[0].reto_prepago_bono,
+        reto: +resu[0].reto_prepago_numero
+      })
+    }
+  })
+})
+
 
 router.get('/', function(req, res, next) {
   var codigo = req.query.codigo;
@@ -128,6 +148,52 @@ router.get('/manual', function(req, res, next) {
 
   res.send('Enviando a BD');
 });
+
+/* Carga de data Excel en BD. */
+router.get('/manualRP', function(req, res, next) {
+  var date = req.query.date
+  cargarRetoPreEnBd(date).catch(console.error);
+
+  res.send('Enviando a BD');
+});
+
+
+
+async function cargarRetoPreEnBd(date){
+  var bucketName= 'river-sonar-421523_cloudbuild';
+  var fileName = 'BASE BONO PREPAGO POWER - '+date+'.xlsx';
+  // Downloads the file into a buffer in memory.
+  const storage = new Storage({keyFilename: 'key.json'});
+  var contents = await storage.bucket(bucketName).file(fileName).download();
+  console.log('DEBUG: Se descargó xlsx')
+  var wb = new ExcelJS.Workbook();
+  await wb.xlsx.read(contents);
+  contents = null
+  console.log('DEBUG: Se leyó xlsx')
+  con.query('TRUNCATE Data.reto_prepago', function (error, results, fields) {
+    if (error) throw error;
+    console.log('DEBUG: Se truncó tabla Data.reto_prepago')
+    const ws = wb.getWorksheet(1);
+    try {
+      console.log('DEBUG: Inicio de llenado de tabla Data.reto_prepago')
+      ws.eachRow(function(row, rowNumber) {
+        if (rowNumber > 1) {
+          var dni = row.findCell(1).text;
+          var rePre = row.findCell(2).text;
+          var bono = row.findCell(3).text;
+          var fecha = date;
+          con.query('INSERT INTO `Data`.`reto_prepago`(`reto_prepago_dni`,`reto_prepago_bono`,`reto_prepago_fecha`,`reto_prepago_numero`)VALUES(?,?,?,?)', 
+          [dni,bono,fecha,rePre], function (error, results, fields) {
+            if (error) throw error;
+          });
+        }
+      })
+    } catch (error) {
+      console.log(err);
+    }
+  });
+  
+}
 
 async function cargarEnBd(date) {
   var bucketName= 'river-sonar-421523_cloudbuild';
@@ -263,7 +329,7 @@ async function cargarEnBd(date) {
       console.log("DEBUG: Enviado a DB")
     }
     catch (err) {
-        console.log(err);
+      console.log(err);
     }
   });
   
