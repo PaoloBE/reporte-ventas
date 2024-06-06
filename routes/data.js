@@ -29,12 +29,25 @@ router.get('/checkOne', function(req, res, next) {
       console.log(error);
       res.status(404).send('Error al procesar')
     } else if (!results.length) {
-      res.status(404).send('No Existe el usuario')
+      con.query('SELECT * FROM Data.reto_prepago WHERE CAST(reto_prepago_dni as UNSIGNED) = ?', +codigo, function(err, results2, fld2) {
+        if (error) {
+          console.log(error);
+          res.status(404).send('Error al procesar')
+        } else if (!results2.length) {
+          res.status(404).send('No Existe el usuario')
+        } else {
+          res.status(200).send({
+            codigo : results2[0].reto_prepago_dni,
+            nombre : '',
+            state: 'reto'
+          })
+        }
+      })
     } else {
-      var resu = JSON.parse(JSON.stringify(results))
       res.status(200).send({
         codigo : results[0].codigo,
-        nombre : results[0].nombre
+        nombre : results[0].nombre,
+        state: 'ventas'
       })
     }
   })
@@ -253,7 +266,6 @@ async function cargarEnBd(date) {
       ws.eachRow(function(row, rowNumber) {
         if (rowNumber == 3) {
           for (let i = 1; i <= row.actualCellCount; i++) {
-            console.log(i+' - '+row.findCell(i).text)
             ppoAvPOS = row.findCell(i).text == 'Sum of OSS' ? i : ppoAvPOS;
             ppoNCPOS = row.findCell(i).text == 'Sum of NC OSS' ? i : ppoNCPOS;
             ppo9APOS = row.findCell(i).text == 'Sum of Porta 90 SS OSS' ? i : ppo9APOS;
@@ -278,7 +290,7 @@ async function cargarEnBd(date) {
             peVFAPOS = row.findCell(i).text == 'Sum of PP Flex VR' ? i : peVFAPOS;
             peVFNPOS = row.findCell(i).text == 'Sum of NC PP Flex VR' ? i : peVFNPOS;
             pePFAPOS = row.findCell(i).text == 'Sum of PP Flex Porta' ? i : pePFAPOS;
-            pePFNPOS = row.findCell(i).text == 'Sum of NC PP Flex VR' ? i : pePFNPOS;
+            pePFNPOS = row.findCell(i).text == 'Sum of NC PP Flex Porta' ? i : pePFNPOS;
           }
           row.cellCount
         }
